@@ -1,0 +1,122 @@
+const readline = require('readline');
+
+const ask =readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+const tasks = [];
+
+// adding new task function
+function addNewTask(taskName) {
+    tasks.push({name: taskName, completed: false });
+    console.log(` "${taskName}" added.`);
+} //new_func close
+
+
+// view task list
+function taskView() {
+    if (tasks.length === 0) {
+      console.log("No task Added");
+    } else {
+      console.log("Tasks:");
+      tasks.forEach((task, index) => {
+        console.log(`${index + 1}. [${task.completed ? "x" : " "}] ${task.name}`);
+      });
+    }
+  } //view_func close
+
+
+// edit task
+function taskEdit(taskIndex, newTaskName){
+    if(taskIndex>=0 && taskIndex < tasks.length){
+        tasks[taskIndex].name=newTaskName;
+        console.log('Task updates "${newTaskName}"');
+    }
+        else {
+            console.log('Invalid Entry: Select task index you want to update');
+        }
+    } //edit_func close
+
+
+// Task Completed
+function taskCompleted(taskIndex) {
+    if (taskIndex >= 0 && taskIndex < tasks.length) {
+      tasks[taskIndex].completed = true;
+      console.log(`Task "${tasks[taskIndex].name}" Completed`);
+    } else {
+      console.log('Invalid');
+    }
+  } //completion_fun close
+
+
+// Task Deletion
+function taskDelete(taskIndex){
+    if(taskIndex>=0 && taskIndex < tasks.length){
+        const deleteTask =tasks.splice(taskIndex, 1)[0];
+        console.log(` "${deleteTask.name}" Deleted`);
+    }
+    else{
+        console.log('Task Does not exist');
+    }
+} //deletion_func close
+
+
+//user interaction 
+function User(){
+    ask.question('\n 1.Add New Task\n 2.Edit Task\n 3.View All Tasks\n 4.Mark Task as Completed\n 5.Delete Task\n 6.Exit \n', (choice) => { 
+        switch (choice){
+            case '1':
+                ask.question('Enter the Task Name => ', (taskName) => {
+                    addNewTask(taskName);
+                    User();
+                });
+                break;
+
+                case '2':
+                    ask.question('Edit Task Index you want to change => ', (taskIndex) => {
+                        ask.question('Enter New Task => ', (newTaskName) => {
+                            taskEdit(parseInt(taskIndex) -1, newTaskName);
+                            User();
+                        });
+                    });
+                    break;
+
+                    case '3':
+                        taskView();
+                        User();
+                        break;
+
+                    case '4':
+                        ask.question('Enter the task index => ', (taskIndex) => {
+                            taskCompleted(parseInt(taskIndex) -1 );
+                            User();
+                        });
+                        break;
+
+                        case '5':
+                            ask.question('Select Index to Delete Task => ', (taskIndex) =>{
+                                taskDelete(parseInt(taskIndex) -1);
+                                User();
+                            });
+                            break;
+
+                            case '6':
+                                ask.close();
+                                break;
+
+                                default:
+                                    console.log('Invalid Index Selection');
+                                    User();
+                                    break;
+
+        }
+    });
+
+    }
+
+
+console.log('Your To-Do List');
+User();
+
+
